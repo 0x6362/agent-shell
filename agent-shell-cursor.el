@@ -44,6 +44,24 @@ The first element is the command name, and the rest are command parameters."
   :type '(repeat string)
   :group 'agent-shell)
 
+(defcustom agent-shell-cursor-default-model-id
+  nil
+  "Default Cursor Model ID.
+
+Must be one of the model ID's displayed under \"Available models\"
+when starting a new shell."
+  :type '(choice (const nil) string)
+  :group 'agent-shell)
+
+(defcustom agent-shell-cursor-default-session-mode-id
+  nil
+  "Default Cursor session mode ID.
+
+Must be one of the session ID's displayed under \"Available modes\"
+when starting a new shell."
+  :type '(choice (const nil) string)
+  :group 'agent-shell)
+
 (defcustom agent-shell-cursor-environment
   nil
   "Environment variables for the Cursor agent client.
@@ -67,6 +85,10 @@ Returns an agent configuration alist using `agent-shell-make-agent-config'."
    :welcome-function #'agent-shell-cursor--welcome-message
    :client-maker (lambda (buffer)
                    (agent-shell-cursor-make-client :buffer buffer))
+   :default-model-id (lambda () (if (functionp agent-shell-cursor-default-model-id)
+                                    (funcall agent-shell-cursor-default-model-id)
+                                  agent-shell-cursor-default-model-id))
+   :default-session-mode-id (lambda () agent-shell-cursor-default-session-mode-id)
    :install-instructions "Install with: npm install -g @blowmage/cursor-agent-acp\nSee https://github.com/blowmage/cursor-agent-acp-npm for details."))
 
 (defun agent-shell-cursor-start-agent ()
